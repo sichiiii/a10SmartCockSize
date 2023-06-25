@@ -36,7 +36,7 @@ def close_db_connection():
         del db_connections.connection
 
 
-bot = telebot.TeleBot('<TOKEN>')
+bot = telebot.TeleBot('<BOT_TOKEN>')
 
 
 def generate_value(value_range):
@@ -135,54 +135,15 @@ def get_leaderboard(message):
         cursor.execute("SELECT nickname, length, width FROM users ORDER BY length DESC")
         results = cursor.fetchall()
 
-        image = Image.new("RGB", (table_width, table_height), (255, 255, 255))
-        draw = ImageDraw.Draw(image)
-
-        # Заголовки столбцов
-        header_font = ImageFont.truetype("arial.ttf", font_size)
-        header_text = ["Nickname", "Length", "Width"]
-        header_x = 0
-        for i, text in enumerate(header_text):
-            header_width = column_widths[i]
-            draw.rectangle(
-                [(header_x, 0), (header_x + header_width, header_height)],
-                fill=(200, 200, 200)
-            )
-            draw.text(
-                (header_x + 5, 10),
-                text,
-                font=header_font,
-                fill=(0, 0, 0)
-            )
-            header_x += header_width
-
-        # Данные из базы данных
-        data_font = ImageFont.truetype("arial.ttf", font_size)
-        data_x = 0
-        data_y = header_height
-        for row in results:
-            for i, cell in enumerate(row):
-                cell_width = column_widths[i]
-                draw.rectangle(
-                    [(data_x, data_y), (data_x + cell_width, data_y + row_height)],
-                    fill=(255, 255, 255)
-                )
-                text = str(cell)
-                wrapped_text = textwrap.fill(text, width=12)
-                draw.text(
-                    (data_x + 5, data_y + 10),
-                    wrapped_text,
-                    font=data_font,
-                    fill=(0, 0, 0)
-                )
-                data_x += cell_width
-            data_x = 0
-            data_y += row_height
-
-        image.save("leaderboard.png")
-
-        with open('leaderboard.png', 'rb') as photo:
-            bot.send_photo(message.chat.id, photo)
+        message_text = f'Leaderboards:'
+        count = 0
+        for i in results:
+            if count < 10:
+                message_text += f'\n {i[0]}: {i[1]} cm, {i[2]} cm'
+            else:
+                break
+            count += 1
+        bot.send_message(message.chat.id, text=message_text)
     except Exception as ex:
         logger.error(str(ex))
 
