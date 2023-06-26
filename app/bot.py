@@ -1,11 +1,10 @@
+import time
 import random
 import telebot
-from telebot import types
 import sqlite3
-import time
 import threading
-from PIL import Image, ImageDraw, ImageFont
-import textwrap
+
+from telebot import types
 from app_logger import get_logger
 
 
@@ -36,7 +35,7 @@ def close_db_connection():
         del db_connections.connection
 
 
-bot = telebot.TeleBot('<BOT_TOKEN>')
+bot = telebot.TeleBot('<TOKEN>')
 
 
 def generate_value(value_range):
@@ -61,7 +60,7 @@ def inline_command_handler(query):
 
         current_time = time.time()
 
-        if last_request_time is None or current_time - last_request_time >= 24 * 60 * 60:
+        if last_request_time is None or current_time - last_request_time >= 12 * 60 * 60:
             length, width = generate_size()
             if query.from_user.username:
                 nickname = query.from_user.username
@@ -102,6 +101,7 @@ def get_last_request_time(user_id):
     except Exception as ex:
         logger.error(str(ex))
 
+
 def get_last_request_size(user_id):
     try:
         conn = get_db_connection()
@@ -138,7 +138,7 @@ def get_leaderboard(message):
         message_text = f'Leaderboards:'
         count = 0
         for i in results:
-            if count < 10:
+            if count < 13:
                 message_text += f'\n {i[0]}: {i[1]} cm, {i[2]} cm'
             else:
                 break
