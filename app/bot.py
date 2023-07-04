@@ -139,7 +139,7 @@ def get_leaderboard(message):
         count = 0
         for i in results:
             if count < 13:
-                message_text += f'\n{count}. {i[0]}: {i[1]} cm, {i[2]} cm'
+                message_text += f'\n{count+1}. {i[0]}: {i[1]} cm, {i[2]} cm'
             else:
                 break
             count += 1
