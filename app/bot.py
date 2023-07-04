@@ -148,5 +148,8 @@ def get_leaderboard(message):
         logger.error(str(ex))
 
 
-bot.polling()
-close_db_connection()
+while True:
+    try:
+        bot.polling()
+    except:
+        time.sleep(5)
