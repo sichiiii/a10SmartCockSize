@@ -132,13 +132,15 @@ def get_leaderboard(message):
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        cursor.execute("SELECT nickname, length, width FROM users ORDER BY length DESC")
+        one_day_ago_timestamp = time.time() - 24 * 60 * 60
+        cursor.execute("SELECT nickname, length, width FROM users WHERE last_request_time > %s ORDER BY length DESC",
+                       (one_day_ago_timestamp,))
         results = cursor.fetchall()
 
         message_text = f'Leaderboards:'
         count = 0
         for i in results:
-            if count < 13:
+            if count < 15:
                 message_text += f'\n{count+1}. {i[0]}: {i[1]} cm, {i[2]} cm'
             else:
                 break
