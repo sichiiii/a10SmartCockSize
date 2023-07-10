@@ -35,7 +35,7 @@ def close_db_connection():
         del db_connections.connection
 
 
-bot = telebot.TeleBot('<TOKEN>')
+bot = telebot.TeleBot('5997455790:AAHHV9nT5gGa9F05sNmZrTq-P7ADFa9FM-0')
 
 
 def generate_value(value_range):
@@ -133,7 +133,7 @@ def get_leaderboard(message):
         cursor = conn.cursor()
 
         one_day_ago_timestamp = time.time() - 24 * 60 * 60
-        cursor.execute("SELECT nickname, length, width FROM users WHERE last_request_time > %s ORDER BY length DESC",
+        cursor.execute("SELECT nickname, length, width FROM users WHERE last_request_time > %s ORDER BY length DESC" %
                        (one_day_ago_timestamp,))
         results = cursor.fetchall()
 
