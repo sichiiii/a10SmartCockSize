@@ -11,17 +11,27 @@ from app_logger import get_logger
 logger = get_logger(__name__)
 db_connections = threading.local()
 
-table_width = 480
-table_height = 780
-column_widths = [200, 200, 200]
-header_height = 50
-row_height = 30
-font_size = 20
-
 percentages = [3.3, 1.3, 7.4, 23.4, 35.8, 21.4, 6.9, 0.5]
 length_ranges = [(7, 11), (11, 12), (12, 14), (14, 16.5), (16.5, 17.5), (17.5, 20), (20, 23), (23, 27)]
 width_ranges = [(2.22, 2.41), (2.41, 2.8), (2.8, 3.18), (3.18, 3.58), (3.58, 3.97), (3.97, 4.39), (4.39, 4.77), (4.77, 6.33)]
 
+roles = ["гейский", "натуральный", "бисексуальный", "фуривый", "жабий", "лесбийский", "трансгендерный", "квирный",
+         "пансексуальный", "деми-сексуальный", "интерсексуальный", "асексуальный", "гетеросексуальный",
+         "педерастический", "андрогинный", "гендерфлюидный", "полиаморный", "сквиртинговый", "фемдомный",
+         "мазохистический", "садистический", "вояжерский", "зоофильский", "некрофильский", "ви-фи", "драговый",
+         "русалочий", "киборговый", "роботичный", "мультипликаторский", "покемоновый", "фантастический",
+         "цифровой", "свингерский", "веганский", "феминистский", "мизогинный", "сексворкерский", "полигамный",
+         "садомазохистический", "киберпанковский", "косплейный", "фуррийский", "баблофильский",
+         "антиконформистский", "татуировочный", "пирсинговый", "готический", "эмоциональный", "хиппи",
+         "рейверский", "геймерский", "кинофильский", "книголюбский", "фотографический", "художественный",
+         "музыкальный", "танцевальный", "актерский", "студенческий", "рабочий", "предпринимательский",
+         "путешественнический", "фрилансовый", "интровертный", "экстравертный", "сномантский", "вегетарианский",
+         "фрутарианский", "манифестантский", "революционерский", "антивакцинный", "донорский", "циничный",
+         "оптимистический", "пессимистический", "реалистичный", "идеалистический", "утопистический",
+         "рефлексивный", "латентный", "пограничный", "сталкерский", "абсентный", "квантовый", "стилобатный",
+         "ситохимический", "гелиотипический", "аметабиозный", "авторитарный", "амфетаминовый", "триптический",
+         "оптиматический", "прапигментный", "антопогонный", "рекурсионистический", "артистический",
+         "якакашистический", "пеполнантский"]
 
 def get_db_connection():
     if not hasattr(db_connections, 'connection'):
@@ -35,7 +45,7 @@ def close_db_connection():
         del db_connections.connection
 
 
-bot = telebot.TeleBot('5997455790:AAHHV9nT5gGa9F05sNmZrTq-P7ADFa9FM-0')
+bot = telebot.TeleBot('5997455790:AAHj53rKSK9HUK2ICdNh1qWWpbWSoyq2P48')
 
 
 def generate_value(value_range):
@@ -59,9 +69,11 @@ def inline_command_handler(query):
         last_request_time = get_last_request_time(user_id)
 
         current_time = time.time()
+        role = random.choice(roles)
 
         if last_request_time is None or current_time - last_request_time >= 12 * 60 * 60:
             length, width = generate_size()
+
             if query.from_user.username:
                 nickname = query.from_user.username
             elif query.from_user.first_name and query.from_user.last_name:
@@ -69,15 +81,16 @@ def inline_command_handler(query):
             else:
                 nickname = str(user_id)
 
-            save_last_request_time(user_id, current_time, round(length, 2), round(width, 2), nickname)
+            save_last_request_time(user_id, current_time, round(length, 2), round(width, 2), nickname, role)
         else:
-            length, width = get_last_request_size(user_id)
+            length, width, role = get_last_request_size(user_id)
+
 
         check_size_button = types.InlineQueryResultArticle(
             id=user_id,
             title='Проверить кок',
             input_message_content=types.InputTextMessageContent(
-                message_text=f'My cock length: {round(length, 2)} сm, width: {round(width, 2)} cm'
+                message_text=f'У тебя {role} писюн с длиной: {round(length, 2)} см, диаметр: {round(width, 2)} см'
             ),
         )
 
@@ -107,20 +120,20 @@ def get_last_request_size(user_id):
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        cursor.execute('SELECT length, width FROM users WHERE id = ?', (user_id,))
+        cursor.execute('SELECT length, width, role FROM users WHERE id = ?', (user_id,))
         result = cursor.fetchone()
 
-        return result[0], result[1]
+        return result[0], result[1], result[2]
     except Exception as ex:
         logger.error(str(ex))
 
 
-def save_last_request_time(user_id, last_request_time, length, width, nickname):
+def save_last_request_time(user_id, last_request_time, length, width, nickname, role):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        cursor.execute('INSERT OR REPLACE INTO users (id, last_request_time, length, width, nickname) VALUES (?, ?, ?, ?, ?)', (user_id, last_request_time, length, width, nickname))
+        cursor.execute('INSERT OR REPLACE INTO users (id, last_request_time, length, width, nickname, role) VALUES (?, ?, ?, ?, ?, ?)', (user_id, last_request_time, length, width, nickname, role))
         conn.commit()
     except Exception as ex:
         logger.error(str(ex))
