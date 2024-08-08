@@ -90,7 +90,7 @@ def inline_command_handler(query):
             id=user_id,
             title='Проверить кок',
             input_message_content=types.InputTextMessageContent(
-                message_text=f'У тебя {role} писюн\nДлина: {round(length, 2)} см\nДиаметр: {round(width, 2)} см\nКачество сна: {print(random.randint(1,100))}%'
+                message_text=f'У тебя {role} писюн\nДлина: {round(length, 2)} см\nДиаметр: {round(width, 2)} см\nКачество сна: {random.randint(1,100)}%'
             ),
         )
 
