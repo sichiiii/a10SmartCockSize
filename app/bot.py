@@ -81,7 +81,7 @@ def message_handler(message):
             race = generate_pillar_image(width, length, race)
 
         photo = open('image.png', 'rb')
-        bot.send_photo(chat_id=message.chat.id, photo=photo, caption=f'{message.from_user.username}, тебя {role} писюн\nДлина: {length} см\nДиаметр: {width} см\nРаса: {race}\nКачество сна: {sleep_quality}%')
+        bot.send_photo(chat_id=message.chat.id, photo=photo, caption=f'@{message.from_user.username}, у тебя {role} писюн\nДлина: {length} см\nДиаметр: {width} см\nРаса: {race}\nКачество сна: {sleep_quality}%')
     except Exception as ex:
         logger.error(str(ex))
 
