@@ -5,7 +5,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY arial.ttf .
+COPY create_dicpic.py .
 COPY bot.py .
 COPY app_logger.py .
 COPY users_data.db .
