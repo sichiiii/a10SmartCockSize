@@ -62,7 +62,7 @@ def message_handler(message):
         current_time = time.time()
         role = random.choice(roles)
 
-        if last_request_time is None or current_time - last_request_time <= 12 * 60 * 60:
+        if last_request_time is None or current_time - last_request_time >= 12 * 60 * 60:
             length, width = generate_size()
 
             if message.from_user.username:
